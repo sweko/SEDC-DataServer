@@ -10,7 +10,9 @@ namespace SedcServer
     {
         static void Main(string[] args)
         {
-            WebServer ws = new WebServer();
+            ushort port = 8081;
+            WebServer ws = new WebServer(port);
+            ws.Start();
             ws.Start();
         }
     }
