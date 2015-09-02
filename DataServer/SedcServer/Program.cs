@@ -13,7 +13,13 @@ namespace SedcServer
             ushort port = 8081;
             WebServer ws = new WebServer(port);
             ws.Start();
-            ws.Start();
+            //while (true)
+            //{
+            //    var command = Console.ReadLine();
+            //    if (command == "exit")
+            //        ws.Stop();
+            //}
+            
         }
     }
 }

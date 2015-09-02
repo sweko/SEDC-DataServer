@@ -43,7 +43,7 @@ namespace SedcServerTests
 
             ws.Start();
             var result = ws.Start();
-            Assert.AreEqual("Already started...", result);
+            Assert.AreEqual("Already started!", result);
         }
 
 
