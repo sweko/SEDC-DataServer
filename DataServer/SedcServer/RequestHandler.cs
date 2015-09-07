@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SedcServer
 {
@@ -16,21 +18,21 @@ namespace SedcServer
             ServerSocket = socket;
         }
 
-        internal void AcceptRequest()
+        internal async void AcceptRequest()
         {
             Socket clientSocket = null;
             try
             {
                 // Create new thread to handle the request and continue to listen the socket.
                 clientSocket = ServerSocket.Accept();
+                clientSocket.ReceiveTimeout = ServerSocket.ReceiveTimeout;
+                clientSocket.SendTimeout = ServerSocket.SendTimeout;
 
-                //var requestHandler = new Thread(() =>
-                //{
-                    clientSocket.ReceiveTimeout = ServerSocket.ReceiveTimeout;
-                    clientSocket.SendTimeout = ServerSocket.SendTimeout;
-                    HandleTheRequest(clientSocket);
-                //});
-                //requestHandler.Start();
+                //await Task.Run(() => HandleTheRequest(clientSocket));
+                var requestHandler = new Thread(() => HandleTheRequest(clientSocket));
+                requestHandler.Start();
+
+                //HandleTheRequest(clientSocket);
             }
             catch
             {
@@ -43,11 +45,74 @@ namespace SedcServer
 
         private void HandleTheRequest(Socket clientSocket)
         {
+            //Thread.Sleep(5000);
+            //Console.WriteLine("Server request at {0}", DateTime.UtcNow);
             string requestString = DecodeRequest(clientSocket);
+            RequestParser parser = new RequestParser(requestString);
 
-            string response = "<h1>Hello World!<h1>";
-            var byteResponse = Encoding.UTF8.GetBytes(response);
-            byte[] byteHeader = CreateHeader("200", byteResponse.Length, "text/html");
+            Console.WriteLine("Received request {0}", requestString);
+
+            byte[] byteResponse = new byte[0];
+            string statusCode = "200";
+            string contentType = "text/html";
+            switch (parser.Kind)
+            {
+                case RequestKind.Action:
+                    switch (parser.Action.ToLower())
+                    {
+                        case "sayhello":
+                            {
+                                string response = "<h1>Hello " + parser.Parameter + "</h1>";
+                                byteResponse = Encoding.UTF8.GetBytes(response);
+                                break;
+                            }
+                        default:
+                            {
+                                string response = "<h1>Unsupported action " + parser.Action + "</h1>";
+                                byteResponse = Encoding.UTF8.GetBytes(response);
+                                break;
+                            }
+                    } 
+                    break;
+                case RequestKind.File:
+                    if (File.Exists(parser.FileName))
+                    {
+                        switch (parser.Extension)
+                        {
+                            case "ico":
+                            {
+                                byteResponse = File.ReadAllBytes(parser.FileName);
+                                contentType = "image/ico";
+                                break;
+                            }
+                            case "html":
+                            {
+                                byteResponse = File.ReadAllBytes(parser.FileName);
+                                break;
+                            }
+                            default:
+                            {
+                                byteResponse = File.ReadAllBytes(parser.FileName);
+                                contentType = "text/plain";
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        statusCode = "404";
+                    }
+                    break;
+                case RequestKind.Error:
+                    statusCode = "501";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+
+
+            byte[] byteHeader = CreateHeader(statusCode, byteResponse.Length, contentType);
             clientSocket.Send(byteHeader);
             clientSocket.Send(byteResponse);
             clientSocket.Close();
