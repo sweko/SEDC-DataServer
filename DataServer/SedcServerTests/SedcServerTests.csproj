@@ -54,6 +54,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\SedcServer.Core\SedcServer.Core.csproj">
+      <Project>{083F81F1-B080-4AA5-B1EC-0B83FDAA3F9D}</Project>
+      <Name>SedcServer.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SedcServer\SedcServer.csproj">
       <Project>{A477C13A-F422-405E-B657-2335F239BFC8}</Project>
       <Name>SedcServer</Name>

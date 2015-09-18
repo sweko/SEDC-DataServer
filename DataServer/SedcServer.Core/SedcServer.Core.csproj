@@ -4,16 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A477C13A-F422-405E-B657-2335F239BFC8}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{083F81F1-B080-4AA5-B1EC-0B83FDAA3F9D}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SedcServer</RootNamespace>
-    <AssemblyName>SedcServer</AssemblyName>
+    <RootNamespace>SedcServer.Core</RootNamespace>
+    <AssemblyName>SedcServer.Core</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -34,7 +32,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,17 +39,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="ActionManagers\ActionManagerFactory.cs" />
+    <Compile Include="ActionManagers\DefaultActionManager.cs" />
+    <Compile Include="ActionManagers\IActionManager.cs" />
+    <Compile Include="Header.cs" />
+    <Compile Include="ProcessResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SedcServer.Core\SedcServer.Core.csproj">
-      <Project>{083F81F1-B080-4AA5-B1EC-0B83FDAA3F9D}</Project>
-      <Name>SedcServer.Core</Name>
-    </ProjectReference>
+    <Compile Include="RequestHandler.cs" />
+    <Compile Include="RequestParser.cs" />
+    <Compile Include="RequestProcessor.cs" />
+    <Compile Include="StatusCode.cs" />
+    <Compile Include="WebServer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

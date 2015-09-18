@@ -10,7 +10,7 @@ namespace SedcServer
     {
         Action,
         File,
-        Error
+        Error,
     }
 
     public class RequestParser
@@ -29,6 +29,7 @@ namespace SedcServer
         public RequestParser(string requestString)
         {
             RequestString = requestString;
+            Kind = RequestKind.Error;
             //parsing the request string
             Parse();
         }
@@ -36,6 +37,8 @@ namespace SedcServer
         private void Parse()
         {
             var lines = RequestString.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length == 0)
+                return;
             Headers = new List<Header>();
             for (int i = 1; i < lines.Length; i++)
             {
@@ -48,7 +51,6 @@ namespace SedcServer
                 };
                 Headers.Add(header);
             }
-
             ParseMethod(lines[0]);
         }
 
@@ -86,7 +88,5 @@ namespace SedcServer
             }
             Kind = RequestKind.Error;
         }
-
-
     }
 }
